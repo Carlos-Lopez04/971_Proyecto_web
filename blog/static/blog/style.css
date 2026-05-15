@@ -1,0 +1,318 @@
+/* ============================================
+   IMAGEN DE FONDO PRINCIPAL
+   ============================================ */
+
+/* La imagen de fondo se aplica a todo el body */
+body {
+    /* Ruta CORRECTA para tu imagen estática */
+    background-image: url('/static/images/videojuegos/58916.jpg');
+    
+    /* Configuración para que se vea profesional */
+    background-size: cover;          /* Cubre toda la pantalla */
+    background-position: center;     /* Centra la imagen */
+    background-attachment: fixed;    /* Efecto parallax (fijo al hacer scroll) */
+    background-repeat: no-repeat;    /* No repetir la imagen */
+    
+    /* Color de respaldo mientras carga la imagen */
+    background-color: #2d3436;
+    
+    /* Para que el texto sea legible sobre la imagen */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Capa semitransparente sobre la imagen de fondo para mejor legibilidad */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);  /* Capa negra semitransparente */
+    z-index: -1;
+}
+
+/* Contenedor principal con fondo blanco semitransparente */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);  /* Blanco semitransparente */
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(0px);  /* Sin desenfoque en el contenedor */
+}
+
+/* ============================================
+   RESTO DEL CSS (igual que antes)
+   ============================================ */
+
+:root {
+    --primary: #6c5ce7;
+    --secondary: #a8a5e6;
+    --dark: #2d3436;
+    --light: #f9f9f9;
+}
+
+/* Header y navegación */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid var(--primary);
+}
+
+h1 {
+    color: var(--primary);
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-left: 10px;
+    transition: transform 0.2s, background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    background: #5a4bd1;
+}
+
+.btn-api {
+    background: #00b894;
+}
+
+.btn-api:hover {
+    background: #00a382;
+}
+
+/* Filtros */
+.filtros {
+    background: rgba(240, 240, 240, 0.9);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.generos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-filtro {
+    background: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--dark);
+    border: 1px solid #ddd;
+    transition: all 0.2s;
+}
+
+.btn-filtro:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Grid responsivo */
+.grid-juegos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Estilos para imágenes de juegos */
+.card-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.card:hover .card-img {
+    transform: scale(1.05);
+}
+
+.card-img-placeholder {
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: white;
+}
+
+.no-img {
+    font-size: 0.8rem;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.genero {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin: 10px 0;
+}
+
+.dev-info {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Formulario */
+.form-crear {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.form-crear label {
+    font-weight: bold;
+    margin-top: 10px;
+    color: var(--primary);
+}
+
+.form-crear input, 
+.form-crear textarea, 
+.form-crear select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-crear input[type="file"] {
+    border: 1px dashed var(--primary);
+    background: #f9f9ff;
+    cursor: pointer;
+}
+
+.form-crear small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #5a4bd1;
+}
+
+.btn-cancel {
+    display: inline-block;
+    text-align: center;
+    background: #ddd;
+    color: #333;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.btn-cancel:hover {
+    background: #ccc;
+}
+
+.error-msg {
+    background: #ff7675;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #d63031;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn {
+        margin: 5px;
+    }
+    
+    .grid-juegos {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-img, .card-img-placeholder {
+        height: 200px;
+    }
+}
