@@ -1,0 +1,7 @@
+Django==5.2.14
+django-browser-reload==1.13.0
+gunicorn==23.0.0
+pillow==11.2.1
+python-decouple==3.8
+requests==2.32.3
+whitenoise==6.9.0
