@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.db import models
 from .models import Videojuego
 from .services import buscar_portada_videojuego
 
@@ -30,16 +30,56 @@ def _serialize_videojuego(request, juego):
 
 
 def listado_videojuegos(request):
-    genero_filtro = request.GET.get("genero")
-    juegos = Videojuego.objects.all().order_by("-fecha_lanzamiento")
+    """Muestra todos los videojuegos con filtros y ordenamiento"""
 
+    # Obtener el parámetro de ordenamiento (orden)
+    orden = request.GET.get("orden", "recientes")  # Por defecto: más recientes
+
+    # Base de la consulta
+    juegos = Videojuego.objects.all()
+
+    # Aplicar ordenamiento según el botón seleccionado
+    if orden == "recientes":
+        juegos = juegos.order_by("-fecha_lanzamiento")  # Más recientes primero
+        titulo_orden = "📅 Más Recientes"
+    elif orden == "antiguos":
+        juegos = juegos.order_by("fecha_lanzamiento")  # Más antiguos primero
+        titulo_orden = "📅 Más Antiguos"
+    elif orden == "alfabetico":
+        juegos = juegos.order_by("nombre")  # A-Z
+        titulo_orden = "🔤 Alfabético A-Z"
+    elif orden == "alfabetico_inv":
+        juegos = juegos.order_by("-nombre")  # Z-A
+        titulo_orden = "🔤 Alfabético Z-A"
+    else:
+        juegos = juegos.order_by("-fecha_lanzamiento")
+        titulo_orden = "📅 Más Recientes"
+
+    # Filtro por género (mantener)
+    genero_filtro = request.GET.get("genero")
     if genero_filtro:
         juegos = juegos.filter(genero=genero_filtro)
+
+    # Búsqueda (mantener)
+    busqueda = request.GET.get("busqueda", "")
+    if busqueda:
+        juegos = juegos.filter(
+            models.Q(nombre__icontains=busqueda)
+            | models.Q(desarrollador__icontains=busqueda)
+        )
 
     return render(
         request,
         "blog/listado.html",
-        {"juegos": juegos, "generos": Videojuego.GENEROS},
+        {
+            "juegos": juegos,
+            "generos": Videojuego.GENEROS,
+            "total_juegos": juegos.count(),
+            "busqueda": busqueda,
+            "orden_actual": orden,
+            "titulo_orden": titulo_orden,
+            "genero_actual": genero_filtro,
+        },
     )
 
 
