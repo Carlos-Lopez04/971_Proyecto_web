@@ -316,3 +316,20 @@ button:hover {
         height: 200px;
     }
 }
+
+/* Estilo para el botón Recientes */
+.btn-recientes {
+    background: linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%);
+    color: #2d3436;
+}
+
+.btn-recientes:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+/* Indicador de filtro activo (opcional) */
+.btn-recientes.active {
+    background: #e67e22;
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
