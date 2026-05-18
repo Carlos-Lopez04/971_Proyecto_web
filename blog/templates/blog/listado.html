@@ -22,8 +22,11 @@
             </div>
             <nav>
                 <a href="{% url 'crear_videojuego' %}" class="btn">+ Agregar Juego</a>
-                <a href="{% url 'api_videojuegos' %}" class="btn btn-api" target="_blank">Ver API JSON</a>
-                <a href="{% url 'api_posts_recientes' %}" class="btn btn-api" target="_blank">Recientes</a>
+                <!-- ELIMINA o COMENTA esta línea anterior -->
+                <!-- <a href="{% url 'api_posts_recientes' %}" class="btn btn-api" target="_blank">Recientes</a> -->
+                
+                <!-- AGREGA este nuevo botón para filtrar por recientes -->
+                <a href="?orden=recientes" class="btn btn-recientes">Recientes</a>
             </nav>
         </header>
 
