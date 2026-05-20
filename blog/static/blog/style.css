@@ -1,3 +1,40 @@
+body {
+    background-image: url('/static/images/videojuegos/58916.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: #2d3436;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Capa oscura para legibilidad */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: -1;
+}
+
+/* Contenedor semitransparente */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
 /* ============================================
    VARIABLES Y RESET
    ============================================ */
@@ -16,22 +53,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
-    min-height: 100vh;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 /* ============================================
@@ -163,7 +184,7 @@ h1 {
    ORDENAMIENTO
    ============================================ */
 .ordenamiento {
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.95);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 20px;
@@ -201,7 +222,7 @@ h1 {
    FILTROS
    ============================================ */
 .filtros {
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.95);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 30px;
@@ -396,7 +417,7 @@ h1 {
 }
 
 .info-item {
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.9);
     padding: 12px;
     border-radius: 8px;
 }
@@ -410,7 +431,7 @@ h1 {
 .descripcion-completa {
     margin: 25px 0;
     padding: 20px;
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.9);
     border-radius: 12px;
 }
 
@@ -455,7 +476,7 @@ h1 {
 }
 
 .seccion-imagenes {
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.9);
     padding: 20px;
     border-radius: 12px;
     margin-top: 15px;
@@ -522,7 +543,7 @@ button {
 }
 
 .info-juego {
-    background: var(--light);
+    background: rgba(248, 249, 250, 0.9);
     padding: 20px;
     border-radius: 8px;
     margin: 20px 0;
