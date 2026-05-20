@@ -119,3 +119,24 @@ def test_crear_videojuego_liga_portada_automatica(mock_buscar_portada, client):
     assert response.status_code == 302
     juego = Videojuego.objects.get(nombre="The Legend of Zelda")
     assert juego.imagen_url_externa == "https://images.example.com/zelda-cover.jpg"
+
+
+@pytest.mark.django_db
+@patch("blog.views.buscar_portada_videojuego")
+def test_crear_videojuego_guarda_sin_portada_si_api_no_responde(mock_buscar_portada, client):
+    mock_buscar_portada.return_value = None
+
+    response = client.post(
+        reverse("crear_videojuego"),
+        {
+            "nombre": "Halo Infinite",
+            "descripcion": "Shooter",
+            "genero": "ACC",
+            "desarrollador": "Xbox Game Studios",
+            "fecha_lanzamiento": date(2021, 12, 8),
+        },
+    )
+
+    assert response.status_code == 302
+    juego = Videojuego.objects.get(nombre="Halo Infinite")
+    assert juego.imagen_url_externa is None

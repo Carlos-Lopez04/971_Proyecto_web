@@ -4,49 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>➕ Agregar Videojuego</title>
+    <title>Agregar Videojuego</title>
     <link rel="stylesheet" href="{% static 'blog/style.css' %}">
 </head>
 <body>
     <div class="container">
         <div class="form-header">
-            <h1>➕ Agregar nuevo videojuego</h1>
-            <a href="{% url 'listado_videojuegos' %}" class="btn-back">← Volver al catálogo</a>
+            <h1>Agregar nuevo videojuego</h1>
+            <a href="{% url 'listado_videojuegos' %}" class="btn-back">Volver al catalogo</a>
         </div>
 
         {% if error %}
             <div class="error-msg">{{ error }}</div>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="form-crear">
+        <form method="post" class="form-crear">
             {% csrf_token %}
-            
-            <label>🎮 Nombre del juego:</label>
+
+            <label>Nombre del juego:</label>
             <input type="text" name="nombre" required placeholder="Ej: The Legend of Zelda">
-            
-            <label>📝 Descripción:</label>
+
+            <label>Descripcion:</label>
             <textarea name="descripcion" rows="5" required placeholder="Describe el juego..."></textarea>
-            
-            <label>🏷️ Género:</label>
+
+            <label>Genero:</label>
             <select name="genero">
                 {% for codigo, nombre in generos %}
                     <option value="{{ codigo }}">{{ nombre }}</option>
                 {% endfor %}
             </select>
-            
-            <label>🏢 Desarrolladora:</label>
+
+            <label>Desarrolladora:</label>
             <input type="text" name="desarrollador" required placeholder="Ej: Nintendo">
-            
-            <label>📅 Fecha de lanzamiento:</label>
+
+            <label>Fecha de lanzamiento:</label>
             <input type="date" name="fecha_lanzamiento" required>
-            
-            <label>🖼️ Imagen local (opcional):</label>
-            <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp">
-            
-            <label>🔗 O URL de imagen externa (opcional):</label>
-            <input type="url" name="imagen_url_externa" placeholder="https://ejemplo.com/imagen.jpg">
-            
-            <button type="submit">💾 Guardar videojuego</button>
+
+            <small>La portada se buscara automaticamente con la API usando el nombre del videojuego.</small>
+
+            <button type="submit">Guardar videojuego</button>
+            <a href="{% url 'listado_videojuegos' %}" class="btn-cancel">Cancelar</a>
         </form>
     </div>
 </body>

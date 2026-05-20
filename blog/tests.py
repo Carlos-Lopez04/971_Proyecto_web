@@ -4,11 +4,15 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 from blog.models import Videojuego
 
 
 class VideojuegoApiTests(TestCase):
+    def setUp(self):
+        self.user_model = get_user_model()
+
     def test_api_videojuegos_incluye_portada(self):
         Videojuego.objects.create(
             nombre="Zelda",
@@ -89,7 +93,9 @@ class VideojuegoApiTests(TestCase):
         )
 
     @patch("blog.views.buscar_portada_videojuego")
-    def test_crear_videojuego_no_pisa_url_manual(self, mock_buscar_portada):
+    def test_crear_videojuego_guarda_sin_portada_si_api_no_encuentra(self, mock_buscar_portada):
+        mock_buscar_portada.return_value = None
+
         response = self.client.post(
             reverse("crear_videojuego"),
             {
@@ -98,14 +104,13 @@ class VideojuegoApiTests(TestCase):
                 "genero": "ACC",
                 "desarrollador": "Xbox Game Studios",
                 "fecha_lanzamiento": date(2021, 12, 8),
-                "imagen_url_externa": "https://manual.example.com/halo.jpg",
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(mock_buscar_portada.called)
+        self.assertTrue(mock_buscar_portada.called)
         juego = Videojuego.objects.get(nombre="Halo Infinite")
-        self.assertEqual(juego.imagen_url_externa, "https://manual.example.com/halo.jpg")
+        self.assertIsNone(juego.imagen_url_externa)
 
     def test_model_guarda_fechas_automaticas(self):
         juego = Videojuego.objects.create(
@@ -159,3 +164,112 @@ class VideojuegoApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Publicado:")
+
+    def test_formulario_crear_no_muestra_campos_manuales_de_imagen(self):
+        response = self.client.get(reverse("crear_videojuego"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'type="file"')
+        self.assertNotContains(response, "imagen_url_externa")
+        self.assertContains(response, "La portada se buscara automaticamente")
+
+    def test_admin_puede_eliminar_videojuego(self):
+        admin = self.user_model.objects.create_user(
+            username="admin",
+            password="secret123",
+            is_staff=True,
+        )
+        juego = Videojuego.objects.create(
+            nombre="Juego de prueba",
+            descripcion="Descripcion",
+            genero="ACC",
+            desarrollador="Dev",
+            fecha_lanzamiento=date(2024, 1, 1),
+        )
+
+        self.client.force_login(admin)
+        response = self.client.post(reverse("eliminar_videojuego", args=[juego.id]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Videojuego.objects.filter(id=juego.id).exists())
+
+    def test_no_admin_no_puede_eliminar_videojuego(self):
+        user = self.user_model.objects.create_user(
+            username="user",
+            password="secret123",
+        )
+        juego = Videojuego.objects.create(
+            nombre="Juego protegido",
+            descripcion="Descripcion",
+            genero="ACC",
+            desarrollador="Dev",
+            fecha_lanzamiento=date(2024, 1, 1),
+        )
+
+        self.client.force_login(user)
+        response = self.client.post(reverse("eliminar_videojuego", args=[juego.id]))
+
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Videojuego.objects.filter(id=juego.id).exists())
+
+    def test_listado_muestra_boton_eliminar_solo_a_admin(self):
+        admin = self.user_model.objects.create_user(
+            username="admin2",
+            password="secret123",
+            is_staff=True,
+        )
+        user = self.user_model.objects.create_user(
+            username="user2",
+            password="secret123",
+        )
+        Videojuego.objects.create(
+            nombre="Control",
+            descripcion="Accion",
+            genero="ACC",
+            desarrollador="Remedy",
+            fecha_lanzamiento=date(2019, 8, 27),
+        )
+
+        self.client.force_login(admin)
+        response_admin = self.client.get(reverse("listado_videojuegos"))
+        self.assertContains(response_admin, "Eliminar")
+
+        self.client.force_login(user)
+        response_user = self.client.get(reverse("listado_videojuegos"))
+        self.assertNotContains(response_user, "Eliminar")
+
+    @patch("blog.views.buscar_portada_videojuego")
+    @patch("blog.views.settings")
+    def test_admin_puede_ver_diagnostico_rawg(self, mock_settings, mock_buscar_portada):
+        admin = self.user_model.objects.create_user(
+            username="admin3",
+            password="secret123",
+            is_staff=True,
+        )
+        mock_settings.RAWG_API_KEY = "abcd1234efgh5678"
+        mock_buscar_portada.return_value = {
+            "portada_url": "https://images.example.com/elden-ring.jpg",
+            "rawg_id": 42,
+            "slug": "elden-ring",
+            "nombre": "Elden Ring",
+        }
+
+        self.client.force_login(admin)
+        response = self.client.get(reverse("diagnostico_rawg"), {"q": "Elden Ring"})
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["has_rawg_api_key"])
+        self.assertEqual(data["rawg_api_key_masked"], "abcd...5678")
+        self.assertEqual(data["resultado"]["nombre"], "Elden Ring")
+
+    def test_no_admin_no_puede_ver_diagnostico_rawg(self):
+        user = self.user_model.objects.create_user(
+            username="user3",
+            password="secret123",
+        )
+
+        self.client.force_login(user)
+        response = self.client.get(reverse("diagnostico_rawg"))
+
+        self.assertEqual(response.status_code, 403)
