@@ -4,69 +4,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogo de Videojuegos</title>
+    <title>🎮 Catálogo de Videojuegos</title>
     <link rel="stylesheet" href="{% static 'blog/style.css' %}">
-    <style>
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="brand">
-                <h1>Catalogo de Videojuegos</h1>
+                <h1>🎮 Catálogo de Videojuegos</h1>
+                <span class="contador">{{ total_juegos }} juegos</span>
             </div>
             <nav>
                 <a href="{% url 'crear_videojuego' %}" class="btn">+ Agregar Juego</a>
-                <!-- ELIMINA o COMENTA esta línea anterior -->
-                <!-- <a href="{% url 'api_posts_recientes' %}" class="btn btn-api" target="_blank">Recientes</a> -->
-                
-                <!-- AGREGA este nuevo botón para filtrar por recientes -->
-                <a href="?orden=recientes" class="btn btn-recientes">Recientes</a>
             </nav>
         </header>
 
+        <!-- Mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Barra de búsqueda -->
+        <div class="busqueda">
+            <form method="get">
+                <input type="text" name="busqueda" placeholder="🔍 Buscar por nombre o desarrolladora..." 
+                       value="{{ busqueda }}" class="search-input">
+                {% if genero_actual %}
+                    <input type="hidden" name="genero" value="{{ genero_actual }}">
+                {% endif %}
+                {% if orden_actual %}
+                    <input type="hidden" name="orden" value="{{ orden_actual }}">
+                {% endif %}
+                <button type="submit" class="btn-search">Buscar</button>
+                {% if busqueda %}
+                    <a href="?{% if genero_actual %}genero={{ genero_actual }}{% endif %}{% if orden_actual %}&orden={{ orden_actual }}{% endif %}" 
+                       class="btn-clear">✖ Limpiar</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Ordenamiento -->
+        <div class="ordenamiento">
+            <h3>📊 Ordenar por:</h3>
+            <div class="botones-orden">
+                <a href="?orden=recientes{% if genero_actual %}&genero={{ genero_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                   class="btn-orden {% if orden_actual == 'recientes' %}active{% endif %}">🆕 Más Recientes</a>
+                <a href="?orden=antiguos{% if genero_actual %}&genero={{ genero_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                   class="btn-orden {% if orden_actual == 'antiguos' %}active{% endif %}">📅 Más Antiguos</a>
+                <a href="?orden=lanzamiento{% if genero_actual %}&genero={{ genero_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                   class="btn-orden {% if orden_actual == 'lanzamiento' %}active{% endif %}">🎮 Por Lanzamiento</a>
+                <a href="?orden=alfabetico{% if genero_actual %}&genero={{ genero_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                   class="btn-orden {% if orden_actual == 'alfabetico' %}active{% endif %}">🔤 A-Z</a>
+            </div>
+        </div>
+
+        <!-- Filtro por género -->
         <div class="filtros">
-            <h3>Filtrar por genero:</h3>
+            <h3>🎯 Filtrar por género:</h3>
             <div class="generos">
-                <a href="{% url 'listado_videojuegos' %}" class="btn-filtro">Todos</a>
+                <a href="?{% if orden_actual %}orden={{ orden_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                   class="btn-filtro {% if not genero_actual %}active{% endif %}">🎲 Todos</a>
                 {% for codigo, nombre in generos %}
-                    <a href="?genero={{ codigo }}" class="btn-filtro">{{ nombre }}</a>
+                    <a href="?genero={{ codigo }}{% if orden_actual %}&orden={{ orden_actual }}{% endif %}{% if busqueda %}&busqueda={{ busqueda }}{% endif %}" 
+                       class="btn-filtro {% if genero_actual == codigo %}active{% endif %}">{{ nombre }}</a>
                 {% endfor %}
             </div>
         </div>
 
+        <!-- Grid de juegos -->
         <div class="grid-juegos">
             {% for juego in juegos %}
                 <div class="card">
-                    {% if juego.imagen %}
-                        <img src="{{ juego.imagen.url }}" alt="{{ juego.nombre }}" class="card-img">
-                    {% elif juego.imagen_url_externa %}
-                        <img src="{{ juego.imagen_url_externa }}" alt="{{ juego.nombre }}" class="card-img">
-                    {% else %}
-                        <div class="card-img-placeholder">
-                            <span class="no-img">Sin imagen</span>
+                    <a href="{% url 'detalle_videojuego' juego.id %}" class="card-link">
+                        {% if juego.imagen %}
+                            <img src="{{ juego.imagen.url }}" alt="{{ juego.nombre }}" class="card-img">
+                        {% elif juego.imagen_url_externa %}
+                            <img src="{{ juego.imagen_url_externa }}" alt="{{ juego.nombre }}" class="card-img">
+                        {% else %}
+                            <div class="card-img-placeholder">🎮</div>
+                        {% endif %}
+                        
+                        <div class="card-content">
+                            <h3>{{ juego.nombre }}</h3>
+                            <span class="genero">{{ juego.get_genero_display }}</span>
+                            <p>{{ juego.descripcion|truncatewords:20 }}</p>
+                            <p class="dev-info">
+                                👾 {{ juego.desarrollador }}<br>
+                                📅 {{ juego.fecha_lanzamiento|date:"d/m/Y" }}
+                            </p>
                         </div>
-                    {% endif %}
-
-                    <div class="card-content">
-                        <h3>{{ juego.nombre }}</h3>
-                        <span class="genero">{{ juego.get_genero_display }}</span>
-                        <p>{{ juego.descripcion|truncatewords:20 }}</p>
-                        <p class="dev-info">
-                            Desarrollador: {{ juego.desarrollador }}<br>
-                            Lanzamiento: {{ juego.fecha_lanzamiento }}<br>
-                            Publicado: {{ juego.created_at|date:"d/m/Y H:i" }}
-                        </p>
+                    </a>
+                    <div class="card-actions">
+                        <a href="{% url 'editar_videojuego' juego.id %}" class="btn-edit">✏️ Editar</a>
+                        <a href="{% url 'eliminar_videojuego' juego.id %}" class="btn-delete">🗑️ Eliminar</a>
                     </div>
                 </div>
             {% empty %}
                 <div class="empty">
-                    <p>No hay videojuegos en el catalogo. Agrega uno.</p>
+                    <p>📭 No hay videojuegos en el catálogo.</p>
+                    <a href="{% url 'crear_videojuego' %}" class="btn">➕ Agregar el primero</a>
                 </div>
             {% endfor %}
         </div>
