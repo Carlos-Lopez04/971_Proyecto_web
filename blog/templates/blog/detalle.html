@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ juego.nombre }} - Detalle</title>
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}">
+</head>
+<body>
+    <div class="container detalle-container">
+        <div class="detalle-header">
+            <a href="{% url 'listado_videojuegos' %}" class="btn-back">← Volver al catálogo</a>
+            <div class="detalle-actions">
+                <a href="{% url 'editar_videojuego' juego.id %}" class="btn-edit">✏️ Editar</a>
+                <a href="{% url 'eliminar_videojuego' juego.id %}" class="btn-delete">🗑️ Eliminar</a>
+            </div>
+        </div>
+
+        <div class="detalle-contenido">
+            <div class="detalle-imagen">
+                {% if juego.imagen %}
+                    <img src="{{ juego.imagen.url }}" alt="{{ juego.nombre }}">
+                {% elif juego.imagen_url_externa %}
+                    <img src="{{ juego.imagen_url_externa }}" alt="{{ juego.nombre }}">
+                {% else %}
+                    <div class="img-placeholder-large">🎮</div>
+                {% endif %}
+            </div>
+
+            <div class="detalle-info">
+                <h1>{{ juego.nombre }}</h1>
+                <div class="genero-badge">{{ juego.get_genero_display }}</div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>👾 Desarrolladora:</strong>
+                        <p>{{ juego.desarrollador }}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>📅 Fecha de lanzamiento:</strong>
+                        <p>{{ juego.fecha_lanzamiento|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>🆔 ID:</strong>
+                        <p>{{ juego.id }}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>📆 Agregado:</strong>
+                        <p>{{ juego.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="descripcion-completa">
+                    <h3>📝 Descripción completa:</h3>
+                    <p>{{ juego.descripcion|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
