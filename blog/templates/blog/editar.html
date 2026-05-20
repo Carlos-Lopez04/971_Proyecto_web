@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✏️ Editar: {{ juego.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1>✏️ Editar: {{ juego.nombre }}</h1>
+            <a href="{% url 'detalle_videojuego' juego.id %}" class="btn-back">← Volver al detalle</a>
+        </div>
+
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="form-editar">
+            {% csrf_token %}
+            
+            <label>🎮 Nombre del juego:</label>
+            <input type="text" name="nombre" value="{{ juego.nombre }}" required>
+            
+            <label>📝 Descripción:</label>
+            <textarea name="descripcion" rows="6" required>{{ juego.descripcion }}</textarea>
+            
+            <label>🏷️ Género:</label>
+            <select name="genero">
+                {% for codigo, nombre in generos %}
+                    <option value="{{ codigo }}" {% if juego.genero == codigo %}selected{% endif %}>
+                        {{ nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>🏢 Desarrolladora:</label>
+            <input type="text" name="desarrollador" value="{{ juego.desarrollador }}" required>
+            
+            <label>📅 Fecha de lanzamiento:</label>
+            <input type="date" name="fecha_lanzamiento" value="{{ juego.fecha_lanzamiento|date:'Y-m-d' }}" required>
+
+            <div class="seccion-imagenes">
+                <h3>🖼️ Imagen actual:</h3>
+                {% if juego.imagen %}
+                    <img src="{{ juego.imagen.url }}" class="preview-imagen">
+                    <label>
+                        <input type="checkbox" name="eliminar_imagen"> ❌ Eliminar imagen actual
+                    </label>
+                {% elif juego.imagen_url_externa %}
+                    <img src="{{ juego.imagen_url_externa }}" class="preview-imagen">
+                    <label>
+                        <input type="checkbox" name="eliminar_url"> ❌ Eliminar URL externa
+                    </label>
+                {% else %}
+                    <p>⚠️ No hay imagen asociada</p>
+                {% endif %}
+
+                <label>📁 Cambiar imagen (subir nueva):</label>
+                <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp">
+
+                <label>🔗 O cambiar URL externa:</label>
+                <input type="url" name="imagen_url_externa" value="{{ juego.imagen_url_externa|default:'' }}">
+            </div>
+
+            <div class="botones-edicion">
+                <button type="submit" class="btn-guardar">💾 Guardar cambios</button>
+                <a href="{% url 'detalle_videojuego' juego.id %}" class="btn-cancelar">❌ Cancelar</a>
+                <a href="{% url 'eliminar_videojuego' juego.id %}" class="btn-eliminar" 
+                   onclick="return confirm('¿Eliminar {{ juego.nombre }}?')">🗑️ Eliminar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
