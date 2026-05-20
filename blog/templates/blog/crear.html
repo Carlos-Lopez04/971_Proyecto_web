@@ -9,12 +9,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>➕ Agregar nuevo videojuego</h1>
-        
+        <div class="form-header">
+            <h1>➕ Agregar nuevo videojuego</h1>
+            <a href="{% url 'listado_videojuegos' %}" class="btn-back">← Volver al catálogo</a>
+        </div>
+
         {% if error %}
             <div class="error-msg">{{ error }}</div>
         {% endif %}
-        
+
         <form method="post" enctype="multipart/form-data" class="form-crear">
             {% csrf_token %}
             
@@ -22,7 +25,7 @@
             <input type="text" name="nombre" required placeholder="Ej: The Legend of Zelda">
             
             <label>📝 Descripción:</label>
-            <textarea name="descripcion" rows="4" required placeholder="Describe el juego..."></textarea>
+            <textarea name="descripcion" rows="5" required placeholder="Describe el juego..."></textarea>
             
             <label>🏷️ Género:</label>
             <select name="genero">
@@ -37,16 +40,13 @@
             <label>📅 Fecha de lanzamiento:</label>
             <input type="date" name="fecha_lanzamiento" required>
             
-            <label>🖼️ Imagen local (subir archivo):</label>
+            <label>🖼️ Imagen local (opcional):</label>
             <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp">
-            <small>Formatos: JPG, PNG, WEBP</small>
             
-            <label>🔗 O URL de imagen externa:</label>
+            <label>🔗 O URL de imagen externa (opcional):</label>
             <input type="url" name="imagen_url_externa" placeholder="https://ejemplo.com/imagen.jpg">
-            <small>Ejemplo: https://picsum.photos/400/300</small>
             
             <button type="submit">💾 Guardar videojuego</button>
-            <a href="{% url 'listado_videojuegos' %}" class="btn-cancel">❌ Cancelar</a>
         </form>
     </div>
 </body>
