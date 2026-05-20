@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗑️ Eliminar {{ juego.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}">
+</head>
+<body>
+    <div class="container confirmar-eliminar">
+        <h1>🗑️ Confirmar eliminación</h1>
+        
+        <div class="aviso">
+            <p>¿Estás seguro de que quieres eliminar <strong>{{ juego.nombre }}</strong>?</p>
+            <p>Esta acción <strong>no se puede deshacer</strong>.</p>
+        </div>
+
+        <div class="info-juego">
+            <h3>Información del juego:</h3>
+            <ul>
+                <li><strong>ID:</strong> {{ juego.id }}</li>
+                <li><strong>Nombre:</strong> {{ juego.nombre }}</li>
+                <li><strong>Desarrolladora:</strong> {{ juego.desarrollador }}</li>
+                <li><strong>Género:</strong> {{ juego.get_genero_display }}</li>
+            </ul>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="botones-eliminar">
+                <button type="submit" class="btn-confirmar">✅ Sí, eliminar</button>
+                <a href="{% url 'detalle_videojuego' juego.id %}" class="btn-cancelar">❌ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
